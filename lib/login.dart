@@ -90,14 +90,16 @@ class _LoginDemoState extends State<LoginDemo> {
                         onPrimary: Colors.white, // foreground
                       ),
                       onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          _formKey.currentState.save();
-                          // _scaffoldKey.currentState.showSnackBar(new SnackBar(
-                          //   content: new Text("Your email: $_email and Password: $_password"),
-                          // ));
+                        // if (_formKey.currentState.validate()) {
+                        //   _formKey.currentState.save();
+                        //   // _scaffoldKey.currentState.showSnackBar(new SnackBar(
+                        //   //   content: new Text("Your email: $_email and Password: $_password"),
+                        //   // ));
+                        //
+                        //   Navigator.push(context, MaterialPageRoute(builder: (_) => MyHome()));
+                        // }
 
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => MyHome()));
-                        }
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => MyHome()));
                       },
                       child: Text(
                         'Login',

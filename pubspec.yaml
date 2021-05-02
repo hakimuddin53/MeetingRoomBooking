@@ -24,10 +24,10 @@ dependencies:
   flutter:
     sdk: flutter
   table_calendar: ^3.0.0
-  build_runner: ^1.11.0
-  build_test: ^1.3.0
-  build_web_compilers: ^2.12.0
   time_picker_widget: ^1.0.0+9
+  dio: ^4.0.0
+  json_serializable: ^4.1.1
+  build_runner: ^2.0.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

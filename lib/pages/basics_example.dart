@@ -34,6 +34,7 @@ class _TableBasicsExampleState extends State<TableBasicsExample> {
       body:
 
       Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
 
       Padding(
@@ -78,13 +79,32 @@ class _TableBasicsExampleState extends State<TableBasicsExample> {
           _focusedDay = focusedDay;
         },
       ),
-     FloatingActionButton(
-        backgroundColor: Colors.black,
+        ],
+    ),
+
+    floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.orangeAccent,
         child: Icon(Icons.add),
         onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (_) => CustomTimePickerDemo())); }
         ),
-      ],
-      ),
+
+       // Row(
+       //      crossAxisAlignment: CrossAxisAlignment.end,
+       //      children: [
+       //        Padding(
+       //          padding: const EdgeInsets.only(left:100.0),
+       //          child: FloatingActionButton(
+       //            onPressed: () {
+       //              // Add your onPressed code here!
+       //            },
+       //            child: Icon(Icons.message,color: Colors.white,),
+       //            backgroundColor: Colors.green,
+       //          ),
+       //        ),
+       //      ],
+       //    ),
+
+
     );
   }
 }
