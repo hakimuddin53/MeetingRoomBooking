@@ -1,6 +1,11 @@
-import 'package:abx_booking/pages/basics_example.dart';
+import 'package:dio/dio.dart';
+import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:flutter/material.dart';
 
+import 'base_page_state.dart';
+import 'components/custom_snackbar.dart';
+import 'data/auth_repo.dart';
+import 'data/result.dart';
 import 'home.dart';
 
 class LoginDemo extends StatefulWidget {
@@ -8,11 +13,11 @@ class LoginDemo extends StatefulWidget {
   _LoginDemoState createState() => _LoginDemoState();
 }
 
-class _LoginDemoState extends State<LoginDemo> {
+class _LoginDemoState extends BasePageState<LoginDemo> {
   final _formKey = GlobalKey<FormState>();
 
-  String _email;
-  String _password;
+  late String _email;
+  late String _password;
 
   @override
   Widget build(BuildContext context) {
@@ -23,100 +28,134 @@ class _LoginDemoState extends State<LoginDemo> {
         backgroundColor: Colors.orange[800],
       ),
       body: SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 60.0),
-              child: Center(
-                child: Container(
-                    width: 200,
-                    height: 150,
-                    /*decoration: BoxDecoration(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 60.0),
+                child: Center(
+                  child: Container(
+                      width: 200,
+                      height: 150,
+                      /*decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(50.0)),*/
-                    child: Image.asset('assets/images/flutter-logo.png')),
+                      child: Image.asset('assets/images/abxexpress.png')),
+                ),
               ),
-            ),
-
-
-            Form(key: _formKey,
-              child: new Column(
-                children: <Widget>[
-                  new TextFormField(
-                    decoration: InputDecoration(
-                        hintText: "aa@bb.com",
-                        labelText: "Email"
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (val){
-                      if (val.length == 0)
-                        return "Please enter email";
-                      else if (!val.contains("@"))
-                        return "Please enter valid email";
-                      else
-                        return null;
-                    },
-                    onSaved: (val)=>_email=val,
-                  ),
-                  new TextFormField(
-                    decoration: InputDecoration(
-                        hintText: "Password",
-                        labelText: "Password"
-                    ),
-                    obscureText: true,
-                    validator: (val){
-                      if (val.length == 0)
-                        return "Please enter password";
-                      else if (val.length <= 5)
-                        return "Your password should be more then 6 char long";
-                      else
-                        return null;
-                    },
-                    onSaved: (val)=>_password=val,
-                  ),
-                  new Padding(
-                    padding: const EdgeInsets.only(top: 30.0),
-                  ),
-                  Container(
-                    height: 50,
-                    width: 250,
-                    decoration: BoxDecoration(
-                        color: Colors.blue, borderRadius: BorderRadius.circular(20)),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.orange, // background
-                        onPrimary: Colors.white, // foreground
-                      ),
-                      onPressed: () {
-                        // if (_formKey.currentState.validate()) {
-                        //   _formKey.currentState.save();
-                        //   // _scaffoldKey.currentState.showSnackBar(new SnackBar(
-                        //   //   content: new Text("Your email: $_email and Password: $_password"),
-                        //   // ));
-                        //
-                        //   Navigator.push(context, MaterialPageRoute(builder: (_) => MyHome()));
-                        // }
-
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => MyHome()));
+              Form(
+                key: _formKey,
+                child: new Column(
+                  children: <Widget>[
+                    new TextFormField(
+                      decoration: InputDecoration(
+                          hintText: "Username", labelText: "Username"),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (val) {
+                        if (val!.length == 0)
+                          return "Please enter username";
+                        else
+                          return null;
                       },
-                      child: Text(
-                        'Login',
-                        style: TextStyle(color: Colors.white, fontSize: 25),
+                      onSaved: (val) => _email = val!,
+                    ),
+                    new TextFormField(
+                      decoration: InputDecoration(
+                          hintText: "Password", labelText: "Password"),
+                      obscureText: true,
+                      validator: (val) {
+                        if (val!.length == 0)
+                          return "Please enter password";
+                        else
+                          return null;
+                      },
+                      onSaved: (val) => _password = val!,
+                    ),
+                    new Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                    ),
+                    Container(
+                      height: 50,
+                      width: 250,
+                      decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.orange, // background
+                          onPrimary: Colors.white, // foreground
+                        ),
+                        onPressed: () {
+                          // test();
+                          _signInHandling();
+
+                          // Navigator.push(context,
+                          //     MaterialPageRoute(builder: (_) => MyHome()));
+                        },
+                        child: Text(
+                          'Login',
+                          style: TextStyle(color: Colors.white, fontSize: 25),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 130,
-                  ),
-                ],
+                    SizedBox(
+                      height: 130,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-      ),
     );
+  }
+
+  void test() async {
+    main();
+    // try {
+    //   print("https://www.google.com");
+    //   Response response = await Dio().get("https://www.google.com");
+    //   //print(response);
+    // } catch (e) {
+    //   print(e);
+    // }
+  }
+
+  void main() async {
+    var dio = Dio()
+      ..options.baseUrl = 'https://google.com'
+      ..interceptors.add(LogInterceptor())
+      ..httpClientAdapter = Http2Adapter(
+        ConnectionManager(
+          idleTimeout: 10000,
+          // Ignore bad certificate
+          onClientCreate: (_, config) => config.onBadCertificate = (_) => true,
+        ),
+      );
+
+    Response<String> response;
+
+    response = await dio.get('/?xx=6');
+    print(response.data?.length);
+    print(response.redirects.length);
+    print(response.data);
+  }
+
+  void _signInHandling() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      showLoadingView(true);
+      FocusScope.of(context).requestFocus(FocusNode());
+
+      Result result = await AuthRepo().login(_email, _password);
+      if (result.isSuccess) {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => MyHome()));
+      } else {
+        CustomSnackbar().show(context, "Login Failed!!", MessageType.ERROR);
+      }
+      showLoadingView(false);
+    }
   }
 }

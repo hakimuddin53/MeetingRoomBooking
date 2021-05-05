@@ -3,5 +3,6 @@ class MeetingRoom {
   String meetingRoomImage;
   String description;
 
-  MeetingRoom({this.name,this.meetingRoomImage,this.description});
+  MeetingRoom(
+      {this.name = "", this.meetingRoomImage = "", this.description = ""});
 }
