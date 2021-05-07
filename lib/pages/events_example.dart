@@ -1,39 +1,62 @@
 import 'dart:collection';
 
+import 'package:abx_booking/data/booking_repo.dart';
+import 'package:abx_booking/data/result.dart';
+import 'package:abx_booking/data/user_repo.dart';
+import 'package:abx_booking/network/api/model/booking_model.dart';
 import 'package:abx_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../addevent.dart';
+import '../base_page_state.dart';
 
 class TableEventsExample extends StatefulWidget {
   final String name;
 
-  TableEventsExample(this.name) {
-    print(name);
-  }
+  TableEventsExample(this.name);
 
   @override
   _TableEventsExampleState createState() => _TableEventsExampleState();
 }
 
-class _TableEventsExampleState extends State<TableEventsExample> {
-  late final ValueNotifier<List<Event>> _selectedEvents;
+class _TableEventsExampleState extends BasePageState<TableEventsExample> {
+  late ValueNotifier<List<Booking>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
-  // RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
-  //     .toggledOff; // Can be toggled on/off by longpressing a date
-
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  // DateTime? _rangeStart;
-  // DateTime? _rangeEnd;
+
+  var kEventsBooking = LinkedHashMap<DateTime, List<Booking>>(
+    equals: isSameDay,
+    hashCode: getHashCode,
+  );
 
   @override
   void initState() {
     super.initState();
 
+    setMeetingRoom(widget.name);
+
     _selectedDay = _focusedDay;
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _loadDataForPage();
+    });
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+  }
+
+  void setMeetingRoom(String name) async {
+    await UserRepo().setMeetingRoom(name);
+  }
+
+  void _loadDataForPage() {
+    var datetimeList = daysInRange(iFirstDay, iLastDay);
+
+    datetimeList.forEach((element) {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final String formatted = formatter.format(element);
+      _loadDataFromAPI(formatted, element);
+    });
   }
 
   @override
@@ -42,91 +65,48 @@ class _TableEventsExampleState extends State<TableEventsExample> {
     super.dispose();
   }
 
-  List<Event> _getEventsForDay(DateTime day) {
-    // Implementation example\
-
-    var kEvents1 = LinkedHashMap<DateTime, List<Event>>(
-      equals: isSameDay,
-      hashCode: getHashCode,
-    )..addAll({
-        // DateTime.utc(2020, 10, item * 4)
-        DateTime.parse("2021-04-01 13:01:01"): [
-          Event('Today\'s Event 1'),
-          Event('Today\'s Event 2'),
-        ],
-      });
-
-    return kEvents1[day] ?? [];
+  List<Booking> _getEventsForDay(DateTime day) {
+    return kEventsBooking[day] ?? [];
   }
-
-  // List<Event> _getEventsForRange(DateTime start, DateTime end) {
-  //   // Implementation example
-  //   final days = daysInRange(start, end);
-  //
-  //   return [
-  //     for (final d in days) ..._getEventsForDay(d),
-  //   ];
-  // }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     if (!isSameDay(_selectedDay, selectedDay)) {
       setState(() {
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
-        // _rangeStart = null; // Important to clean those
-        // _rangeEnd = null;
-        // _rangeSelectionMode = RangeSelectionMode.toggledOff;
       });
 
+      // _getEventsForDay(selectedDay);
       _selectedEvents.value = _getEventsForDay(selectedDay);
     }
   }
-  //
-  // void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
-  //   setState(() {
-  //     _selectedDay = null;
-  //     _focusedDay = focusedDay;
-  //     _rangeStart = start;
-  //     _rangeEnd = end;
-  //     _rangeSelectionMode = RangeSelectionMode.toggledOn;
-  //   });
-  //   //
-  //   // // `start` or `end` could be null
-  //   // if (start != null && end != null) {
-  //   //   _selectedEvents.value = _getEventsForRange(start, end);
-  //   // } else if (start != null) {
-  //   //   _selectedEvents.value = _getEventsForDay(start);
-  //   // } else if (end != null) {
-  //   //   _selectedEvents.value = _getEventsForDay(end);
-  //   // }
-  // }
+
+  void _loadDataFromAPI(String day, DateTime date) async {
+    showLoadingView(true);
+    Result resultApi = await BookingRepo().booking(day);
+    if (resultApi.isSuccess) {
+      var at = resultApi.data;
+      var i = at.bookings;
+      kEventsBooking.addAll({
+        // DateTime.utc(2020, 10, item * 4)
+        date: resultApi.data.bookings
+      });
+
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final String formatted = formatter.format(DateTime.now());
+
+      if (day == formatted) {
+        _selectedEvents = ValueNotifier(_getEventsForDay(date));
+      }
+
+      showLoadingView(false);
+    } else {
+      showLoadingView(false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final titles = [
-      'bike',
-      'boat',
-      'bus',
-      'car',
-      'railway',
-      'run',
-      'subway',
-      'transit',
-      'walk'
-    ];
-
-    final icons = [
-      Icons.directions_bike,
-      Icons.directions_boat,
-      Icons.directions_bus,
-      Icons.directions_car,
-      Icons.directions_railway,
-      Icons.directions_run,
-      Icons.directions_subway,
-      Icons.directions_transit,
-      Icons.directions_walk
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: Text('TableCalendar - Events'),
@@ -141,15 +121,12 @@ class _TableEventsExampleState extends State<TableEventsExample> {
               style: TextStyle(color: Colors.black, fontSize: 24),
             ),
           ),
-          TableCalendar<Event>(
+          TableCalendar<Booking>(
             firstDay: kFirstDay,
             lastDay: kLastDay,
             focusedDay: _focusedDay,
             selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-            // rangeStartDay: _rangeStart,
-            // rangeEndDay: _rangeEnd,
             calendarFormat: _calendarFormat,
-            // rangeSelectionMode: _rangeSelectionMode,
             eventLoader: _getEventsForDay,
             startingDayOfWeek: StartingDayOfWeek.monday,
             calendarStyle: CalendarStyle(
@@ -157,7 +134,6 @@ class _TableEventsExampleState extends State<TableEventsExample> {
               outsideDaysVisible: false,
             ),
             onDaySelected: _onDaySelected,
-            // onRangeSelected: _onRangeSelected,
             onFormatChanged: (format) {
               if (_calendarFormat != format) {
                 setState(() {
@@ -171,7 +147,7 @@ class _TableEventsExampleState extends State<TableEventsExample> {
           ),
           const SizedBox(height: 8.0),
           Expanded(
-            child: ValueListenableBuilder<List<Event>>(
+            child: ValueListenableBuilder<List<Booking>>(
               valueListenable: _selectedEvents,
               builder: (context, value, _) {
                 return ListView.builder(
@@ -188,7 +164,7 @@ class _TableEventsExampleState extends State<TableEventsExample> {
                       ),
                       child: ListTile(
                         onTap: () => print('${value[index]}'),
-                        title: Text('${value[index]}'),
+                        title: Text('${value[index].userName}'),
                       ),
                     );
                   },
@@ -208,3 +184,85 @@ class _TableEventsExampleState extends State<TableEventsExample> {
     );
   }
 }
+
+// for (DateTime indexDay = DateTime(this.year, this.month, 1);
+//     indexDay.month == this.month;
+//     indexDay = indexDay.add(Duration(days: 1))) {
+//   print(indexDay.toString());
+// }
+
+// _getEventsForDay(_selectedDay!);
+// _selectedEvents = ValueNotifier(_eventList);
+
+// final DateFormat formatter = DateFormat('yyyy-MM-dd');
+// final String formatted = formatter.format(day);
+// _loadDataFromAPI(formatted, day);
+
+// final DateFormat formatter = DateFormat('yyyy-MM-dd');
+// final String formatted = formatter.format(day);
+// _loadDataFromAPI(formatted, day);
+
+// if (kEventsBooking[day] != null) {
+//   kEventsBooking[day]!.addAll(_eventListDay);
+// } else {
+//   kEventsBooking[day] = [_eventListDay.single];
+// }
+
+// List<Booking> newEventFromApi = [];
+//
+// showLoadingView(true);
+// Result resultApi = BookingRepo().booking(month);
+// if (resultApi.isSuccess) {
+//   newEventFromApi = resultApi.data;
+//   _eventList.addAll(newEventFromApi);
+//   // setState(() {
+//   //   _eventList.addAll(newEventFromApi);
+//   // });
+//
+//   showLoadingView(false);
+// } else {
+//   showLoadingView(false);
+// }
+
+// showLoadingView(true);
+// Result resultApi = await BookingRepo().booking(5);
+//
+// if (resultApi.isSuccess) {
+//   List<Booking> newEventFromApi = resultApi.data;
+//
+//   // setState(() {
+//   //   _eventList.addAll(newEventFromApi);
+//   // });
+//
+//   _eventList.addAll(_loadDataFromAPI(5));
+//
+//   kEventsBooking.addAll({
+//     // DateTime.utc(2020, 10, item * 4)
+//     day: _eventList
+//   });
+//
+//   showLoadingView(false);
+// } else {
+//   showLoadingView(false);
+// }
+//
+// var kEvents1 = LinkedHashMap<DateTime, List<Booking>>(
+//   equals: isSameDay,
+//   hashCode: getHashCode,
+// )..addAll({
+//     // DateTime.utc(2020, 10, item * 4)
+//     DateTime.parse("2021-04-01 13:01:01"): [
+//       Booking(
+//         1,
+//       ),
+//       Booking('Today\'s Event 2'),
+//     ],
+//   });
+
+//return kEventsBooking[day] ?? [];
+
+// _eventListDay.add(resultApi.data);
+
+// setState(() {
+//   _eventList.addAll(newEventFromApi);
+// });

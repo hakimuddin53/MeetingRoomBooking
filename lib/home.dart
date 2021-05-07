@@ -3,6 +3,8 @@ import 'package:abx_booking/pages/basics_example.dart';
 import 'package:abx_booking/pages/events_example.dart';
 import 'package:flutter/material.dart';
 
+import 'data/user_repo.dart';
+
 class MyHome extends StatefulWidget {
   @override
   _MyHomeState createState() => _MyHomeState();

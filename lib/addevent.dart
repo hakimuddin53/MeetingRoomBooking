@@ -1,5 +1,8 @@
 import 'package:abx_booking/pages/basics_example.dart';
+import 'package:abx_booking/pages/events_example.dart';
 import 'package:flutter/material.dart';
+
+import 'network/api/model/booking_model.dart';
 // import 'package:time_picker_widget/time_picker_widget.dart';
 
 class MyApp extends StatelessWidget {
@@ -19,10 +22,22 @@ class CustomTimePickerDemo extends StatefulWidget {
 }
 
 class _CustomTimePickerDemoState extends State<CustomTimePickerDemo> {
-  late String selectedTime = "121";
+  // late ValueNotifier<List<Booking>> _selectedEvents;
+  // late String selectedTime = "121";
+  //
+  // List<int> _availableHours = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+  // List<int> _availableMinutes = [0];
 
-  List<int> _availableHours = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
-  List<int> _availableMinutes = [0];
+  @override
+  void initState() {
+    super.initState();
+
+    // WidgetsBinding.instance!.addPostFrameCallback((_) {
+    //   _loadDataForPage();
+    // });
+
+    // _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,86 +54,114 @@ class _CustomTimePickerDemoState extends State<CustomTimePickerDemo> {
             child: TextField(
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Add Booking Title',
+                hintText: 'Department Name',
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Text('Thu, May 13 2021', style: TextStyle(fontSize: 20)),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: InkWell(
-                  onTap: () =>
-                      // DEMO --------------
-                      // showCustomTimePicker(
-                      //     context: context,
-                      //     onFailValidation: (context) =>
-                      //         showMessage(context, 'Unavailable selection.'),
-                      //     initialTime: TimeOfDay(
-                      //         hour: _availableHours.first,
-                      //         minute: _availableMinutes.first),
-                      //     selectableTimePredicate: (time) =>
-                      //         _availableHours.indexOf(time.hour) != -1 &&
-                      //         _availableMinutes.indexOf(time.minute) !=
-                      //             -1).then((time) => setState(() =>
-                      //     selectedTime = time.format(context).toString())),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: <Widget>[
+          //     Padding(
+          //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          //       child: Text('Thu, May 13 2021', style: TextStyle(fontSize: 20)),
+          //     ),
+          //     Padding(
+          //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          //       child: InkWell(
+          //         onTap: () =>
+          //             // DEMO --------------
+          //             // showCustomTimePicker(
+          //             //     context: context,
+          //             //     onFailValidation: (context) =>
+          //             //         showMessage(context, 'Unavailable selection.'),
+          //             //     initialTime: TimeOfDay(
+          //             //         hour: _availableHours.first,
+          //             //         minute: _availableMinutes.first),
+          //             //     selectableTimePredicate: (time) =>
+          //             //         _availableHours.indexOf(time.hour) != -1 &&
+          //             //         _availableMinutes.indexOf(time.minute) !=
+          //             //             -1).then((time) => setState(() =>
+          //             //     selectedTime = time.format(context).toString())),
+          //
+          //             selectedTime = showTimePicker(
+          //                     context: context, initialTime: TimeOfDay.now())
+          //                 .toString(),
+          //         // --------------
+          //
+          //         child: Text(
+          //           selectedTime,
+          //           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: <Widget>[
+          //     Padding(
+          //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          //       child: Text('Thu, May 13 2021', style: TextStyle(fontSize: 20)),
+          //     ),
+          //     Padding(
+          //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          //       child: InkWell(
+          //         onTap: () =>
+          //             // DEMO --------------
+          //             // showCustomTimePicker(
+          //             //     context: context,
+          //             //     onFailValidation: (context) =>
+          //             //         showMessage(context, 'Unavailable selection.'),
+          //             //     initialTime: TimeOfDay(
+          //             //         hour: _availableHours.first,
+          //             //         minute: _availableMinutes.first),
+          //             //     selectableTimePredicate: (time) =>
+          //             //         _availableHours.indexOf(time.hour) != -1 &&
+          //             //         _availableMinutes.indexOf(time.minute) !=
+          //             //             -1).then((time) => setState(() =>
+          //             //     selectedTime = time.format(context).toString())),
+          //
+          //             selectedTime = showTimePicker(
+          //                     context: context, initialTime: TimeOfDay.now())
+          //                 .toString(),
+          //         // --------------
+          //
+          //         child: Text(
+          //           selectedTime,
+          //           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
 
-                      selectedTime = showTimePicker(
-                              context: context, initialTime: TimeOfDay.now())
-                          .toString(),
-                  // --------------
-
-                  child: Text(
-                    selectedTime,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Text('Thu, May 13 2021', style: TextStyle(fontSize: 20)),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: InkWell(
-                  onTap: () =>
-                      // DEMO --------------
-                      // showCustomTimePicker(
-                      //     context: context,
-                      //     onFailValidation: (context) =>
-                      //         showMessage(context, 'Unavailable selection.'),
-                      //     initialTime: TimeOfDay(
-                      //         hour: _availableHours.first,
-                      //         minute: _availableMinutes.first),
-                      //     selectableTimePredicate: (time) =>
-                      //         _availableHours.indexOf(time.hour) != -1 &&
-                      //         _availableMinutes.indexOf(time.minute) !=
-                      //             -1).then((time) => setState(() =>
-                      //     selectedTime = time.format(context).toString())),
-
-                      selectedTime = showTimePicker(
-                              context: context, initialTime: TimeOfDay.now())
-                          .toString(),
-                  // --------------
-
-                  child: Text(
-                    selectedTime,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          const SizedBox(height: 8.0),
+          // Expanded(
+          //   child: ValueListenableBuilder<List<Booking>>(
+          //     valueListenable: _selectedEvents,
+          //     builder: (context, value, _) {
+          //       return ListView.builder(
+          //         itemCount: value.length,
+          //         itemBuilder: (context, index) {
+          //           return Container(
+          //             margin: const EdgeInsets.symmetric(
+          //               horizontal: 12.0,
+          //               vertical: 4.0,
+          //             ),
+          //             decoration: BoxDecoration(
+          //               border: Border.all(),
+          //               borderRadius: BorderRadius.circular(12.0),
+          //             ),
+          //             child: ListTile(
+          //               onTap: () => print('${value[index]}'),
+          //               title: Text('${value[index].meetingRoomName}'),
+          //             ),
+          //           );
+          //         },
+          //       );
+          //     },
+          //   ),
+          // ),
           Column(
             children: <Widget>[
               Padding(
@@ -146,7 +189,7 @@ class _CustomTimePickerDemoState extends State<CustomTimePickerDemo> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => TableBasicsExample("")));
+                              builder: (_) => TableEventsExample("")));
                     },
 
                     child: Padding(

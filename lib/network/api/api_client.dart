@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
 
+import 'model/booking_model.dart';
 import 'model/login_model.dart';
 
 part 'api_client.g.dart';
@@ -11,4 +12,7 @@ abstract class ApiClient {
 
   @POST("api/login/signin")
   Future<LoginResponseModel> appLogin(@Body() LoginModel params);
+
+  @POST("api/booking/getbooking")
+  Future<BookingResponseModel> getBooking(@Body() BookingModel params);
 }

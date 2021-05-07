@@ -40,14 +40,17 @@ int getHashCode(DateTime key) {
 }
 
 /// Returns a list of [DateTime] objects from [first] to [last], inclusive.
-// List<DateTime> daysInRange(DateTime first, DateTime last) {
-//   final dayCount = last.difference(first).inDays + 1;
-//   return List.generate(
-//     dayCount,
-//     (index) => DateTime.utc(first.year, first.month, first.day + index),
-//   );
-// }
+List<DateTime> daysInRange(DateTime first, DateTime last) {
+  final dayCount = last.difference(first).inDays + 1;
+  return List.generate(
+    dayCount,
+    (index) => DateTime.utc(first.year, first.month, first.day + index),
+  );
+}
 
 final kNow = DateTime.now();
 final kFirstDay = DateTime(kNow.year, kNow.month - 3, kNow.day);
 final kLastDay = DateTime(kNow.year, kNow.month + 3, kNow.day);
+
+final iFirstDay = DateTime(kNow.year, kNow.month, 1);
+final iLastDay = DateTime(kNow.year, kNow.month + 1, 0);

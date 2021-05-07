@@ -34,6 +34,7 @@ dependencies:
   flutter_spinkit: ^5.0.0
   another_flushbar: ^1.10.20
   dio_http2_adapter: ^2.0.0
+  intl: ^0.17.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
