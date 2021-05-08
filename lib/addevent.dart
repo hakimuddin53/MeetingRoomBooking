@@ -1,46 +1,56 @@
-import 'package:abx_booking/pages/basics_example.dart';
 import 'package:abx_booking/pages/events_example.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'components/custom_snackbar.dart';
 
-import 'network/api/model/booking_model.dart';
-// import 'package:time_picker_widget/time_picker_widget.dart';
-
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Show Custom Time Picker Demo',
-      home: CustomTimePickerDemo(),
-    );
-  }
-}
+import 'package:abx_booking/data/booking_repo.dart';
+import 'base_page_state.dart';
+import 'data/result.dart';
 
 class CustomTimePickerDemo extends StatefulWidget {
+  final DateTime? _selectedDay;
+  CustomTimePickerDemo(this._selectedDay);
+
   @override
   _CustomTimePickerDemoState createState() => _CustomTimePickerDemoState();
 }
 
-class _CustomTimePickerDemoState extends State<CustomTimePickerDemo> {
-  // late ValueNotifier<List<Booking>> _selectedEvents;
-  // late String selectedTime = "121";
-  //
-  // List<int> _availableHours = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
-  // List<int> _availableMinutes = [0];
+class _CustomTimePickerDemoState extends BasePageState<CustomTimePickerDemo> {
+  TimeOfDay selectedStartTime = TimeOfDay(hour: 8, minute: 00);
+  TimeOfDay selectedEndTime = TimeOfDay(hour: 9, minute: 00);
+  late String _department;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-
-    // WidgetsBinding.instance!.addPostFrameCallback((_) {
-    //   _loadDataForPage();
-    // });
-
-    // _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }
 
   @override
   Widget build(BuildContext context) {
+    void _selectStartTime() async {
+      final TimeOfDay newTime = (await showTimePicker(
+        context: context,
+        initialTime: selectedStartTime,
+      ))!;
+      setState(() {
+        selectedStartTime = newTime;
+      });
+    }
+
+    void _selectEndTime() async {
+      final TimeOfDay newTime = (await showTimePicker(
+        context: context,
+        initialTime: selectedEndTime,
+      ))!;
+      setState(() {
+        selectedEndTime = newTime;
+      });
+    }
+
+    final DateFormat formatter = DateFormat('dd MMMM, yyyy');
+    final String _selectedDayDisplay = formatter.format(widget._selectedDay!);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Booking Time'),
@@ -49,119 +59,69 @@ class _CustomTimePickerDemoState extends State<CustomTimePickerDemo> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Department Name',
+          Form(
+            key: _formKey,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Department Name',
+                ),
+                validator: (val) {
+                  if (val!.length == 0)
+                    return "Please enter username";
+                  else
+                    return null;
+                },
+                onSaved: (val) => _department = val!,
               ),
             ),
           ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: <Widget>[
-          //     Padding(
-          //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          //       child: Text('Thu, May 13 2021', style: TextStyle(fontSize: 20)),
-          //     ),
-          //     Padding(
-          //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          //       child: InkWell(
-          //         onTap: () =>
-          //             // DEMO --------------
-          //             // showCustomTimePicker(
-          //             //     context: context,
-          //             //     onFailValidation: (context) =>
-          //             //         showMessage(context, 'Unavailable selection.'),
-          //             //     initialTime: TimeOfDay(
-          //             //         hour: _availableHours.first,
-          //             //         minute: _availableMinutes.first),
-          //             //     selectableTimePredicate: (time) =>
-          //             //         _availableHours.indexOf(time.hour) != -1 &&
-          //             //         _availableMinutes.indexOf(time.minute) !=
-          //             //             -1).then((time) => setState(() =>
-          //             //     selectedTime = time.format(context).toString())),
-          //
-          //             selectedTime = showTimePicker(
-          //                     context: context, initialTime: TimeOfDay.now())
-          //                 .toString(),
-          //         // --------------
-          //
-          //         child: Text(
-          //           selectedTime,
-          //           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: <Widget>[
-          //     Padding(
-          //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          //       child: Text('Thu, May 13 2021', style: TextStyle(fontSize: 20)),
-          //     ),
-          //     Padding(
-          //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          //       child: InkWell(
-          //         onTap: () =>
-          //             // DEMO --------------
-          //             // showCustomTimePicker(
-          //             //     context: context,
-          //             //     onFailValidation: (context) =>
-          //             //         showMessage(context, 'Unavailable selection.'),
-          //             //     initialTime: TimeOfDay(
-          //             //         hour: _availableHours.first,
-          //             //         minute: _availableMinutes.first),
-          //             //     selectableTimePredicate: (time) =>
-          //             //         _availableHours.indexOf(time.hour) != -1 &&
-          //             //         _availableMinutes.indexOf(time.minute) !=
-          //             //             -1).then((time) => setState(() =>
-          //             //     selectedTime = time.format(context).toString())),
-          //
-          //             selectedTime = showTimePicker(
-          //                     context: context, initialTime: TimeOfDay.now())
-          //                 .toString(),
-          //         // --------------
-          //
-          //         child: Text(
-          //           selectedTime,
-          //           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
-
-          const SizedBox(height: 8.0),
-          // Expanded(
-          //   child: ValueListenableBuilder<List<Booking>>(
-          //     valueListenable: _selectedEvents,
-          //     builder: (context, value, _) {
-          //       return ListView.builder(
-          //         itemCount: value.length,
-          //         itemBuilder: (context, index) {
-          //           return Container(
-          //             margin: const EdgeInsets.symmetric(
-          //               horizontal: 12.0,
-          //               vertical: 4.0,
-          //             ),
-          //             decoration: BoxDecoration(
-          //               border: Border.all(),
-          //               borderRadius: BorderRadius.circular(12.0),
-          //             ),
-          //             child: ListTile(
-          //               onTap: () => print('${value[index]}'),
-          //               title: Text('${value[index].meetingRoomName}'),
-          //             ),
-          //           );
-          //         },
-          //       );
-          //     },
-          //   ),
-          // ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child:
+                    Text(_selectedDayDisplay, style: TextStyle(fontSize: 20)),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: InkWell(
+                  onTap: () => setState(() {
+                    _selectStartTime();
+                  }),
+                  child: Text(
+                    selectedStartTime.format(context),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child:
+                    Text(_selectedDayDisplay, style: TextStyle(fontSize: 20)),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: InkWell(
+                  onTap: () => setState(() {
+                    _selectEndTime();
+                  }),
+                  child: Text(
+                    selectedEndTime.format(context),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
           Column(
             children: <Widget>[
               Padding(
@@ -177,19 +137,18 @@ class _CustomTimePickerDemoState extends State<CustomTimePickerDemo> {
                       onPrimary: Colors.white, // foreground
                     ),
                     onPressed: () {
+                      //add method for insert data and call api
+                      _insertNewBooking();
+
                       // if (_formKey.currentState.validate()) {
                       //   _formKey.currentState.save();
                       //   // _scaffoldKey.currentState.showSnackBar(new SnackBar(
                       //   //   content: new Text("Your email: $_email and Password: $_password"),
                       //   // ));
                       //
-                      //   Navigator.push(context, MaterialPageRoute(builder: (_) => MyHome()));
+                      //   Navigator.push(context,
+                      //       MaterialPageRoute(builder: (_) => MyHome()));
                       // }
-
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => TableEventsExample("")));
                     },
 
                     child: Padding(
@@ -214,59 +173,28 @@ class _CustomTimePickerDemoState extends State<CustomTimePickerDemo> {
     );
   }
 
-  showMessage(BuildContext context, String message) => showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          contentPadding: EdgeInsets.zero,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                height: 16,
-              ),
-              Icon(
-                Icons.warning,
-                color: Colors.amber,
-                size: 56,
-              ),
-              SizedBox(
-                height: 12,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Text(
-                  message,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Color(0xFF231F20),
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(
-                height: 12,
-              ),
-              InkWell(
-                onTap: () => Navigator.of(context).pop(),
-                child: Container(
-                  alignment: Alignment.center,
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                      border:
-                          Border(top: BorderSide(color: Color(0xFFE8ECF3)))),
-                  child: Text(
-                    'Error',
-                    style: TextStyle(
-                        color: Color(0xFF2058CA),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      });
+  void _insertNewBooking() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      showLoadingView(true);
+      FocusScope.of(context).requestFocus(FocusNode());
+
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final DateFormat formatterNow = DateFormat('yyyy-MM-dd HH:mm:ss');
+
+      Result result = await BookingRepo().insertNewBooking(
+          formatter.format(widget._selectedDay!),
+          selectedStartTime.format(context),
+          selectedEndTime.format(context),
+          _department,
+          formatterNow.format(DateTime.now()));
+      if (result.isSuccess) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (_) => TableEventsExample("")));
+      } else {
+        CustomSnackbar().show(context, "Login Failed!!", MessageType.ERROR);
+      }
+      showLoadingView(false);
+    }
+  }
 }

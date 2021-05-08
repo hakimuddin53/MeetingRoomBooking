@@ -51,7 +51,7 @@ class _LoginDemoState extends BasePageState<LoginDemo> {
                     new TextFormField(
                       decoration: InputDecoration(
                           hintText: "Username", labelText: "Username"),
-                      keyboardType: TextInputType.emailAddress,
+                      // keyboardType: TextInputType.emailAddress,
                       validator: (val) {
                         if (val!.length == 0)
                           return "Please enter username";
@@ -110,37 +110,6 @@ class _LoginDemoState extends BasePageState<LoginDemo> {
         ),
       ),
     );
-  }
-
-  void test() async {
-    main();
-    // try {
-    //   print("https://www.google.com");
-    //   Response response = await Dio().get("https://www.google.com");
-    //   //print(response);
-    // } catch (e) {
-    //   print(e);
-    // }
-  }
-
-  void main() async {
-    var dio = Dio()
-      ..options.baseUrl = 'https://google.com'
-      ..interceptors.add(LogInterceptor())
-      ..httpClientAdapter = Http2Adapter(
-        ConnectionManager(
-          idleTimeout: 10000,
-          // Ignore bad certificate
-          onClientCreate: (_, config) => config.onBadCertificate = (_) => true,
-        ),
-      );
-
-    Response<String> response;
-
-    response = await dio.get('/?xx=6');
-    print(response.data?.length);
-    print(response.redirects.length);
-    print(response.data);
   }
 
   void _signInHandling() async {

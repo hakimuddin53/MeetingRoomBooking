@@ -85,11 +85,9 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
     showLoadingView(true);
     Result resultApi = await BookingRepo().booking(day);
     if (resultApi.isSuccess) {
-      var at = resultApi.data;
-      var i = at.bookings;
       kEventsBooking.addAll({
         // DateTime.utc(2020, 10, item * 4)
-        date: resultApi.data.bookings
+        date: resultApi.data
       });
 
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -178,8 +176,10 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
           backgroundColor: Colors.orangeAccent,
           child: Icon(Icons.add),
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => CustomTimePickerDemo()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => CustomTimePickerDemo(_selectedDay)));
           }),
     );
   }

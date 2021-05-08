@@ -15,4 +15,7 @@ abstract class ApiClient {
 
   @POST("api/booking/getbooking")
   Future<BookingResponseModel> getBooking(@Body() BookingModel params);
+
+  @POST("api/booking/insertbooking")
+  Future<LoginResponseModel> insertBooking(@Body() Booking params);
 }
