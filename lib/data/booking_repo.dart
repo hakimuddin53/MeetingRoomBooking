@@ -28,8 +28,14 @@ class BookingRepo extends BaseRepo {
     }
   }
 
-  Future<Result> insertNewBooking(String selectedDay, String selectedStartTime,
-      String selectedEndTime, String department, String createdDate) async {
+  Future<Result> insertNewBooking(
+      String selectedDay,
+      String selectedStartTime,
+      String selectedEndTime,
+      String selectedStartTimeDescription,
+      String selectedEndTimeDescription,
+      String department,
+      String createdDate) async {
     try {
       var meetingRoom = await UserRepo().getMeetingRoom();
       var userName = await UserRepo().getUserName();
@@ -42,8 +48,8 @@ class BookingRepo extends BaseRepo {
           userName,
           selectedStartTime,
           selectedEndTime,
-          selectedStartTime,
-          selectedEndTime,
+          selectedStartTimeDescription,
+          selectedEndTimeDescription,
           department,
           true,
           createdDate,

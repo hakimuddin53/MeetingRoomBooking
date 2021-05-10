@@ -18,6 +18,7 @@ class CustomTimePickerDemo extends StatefulWidget {
 class _CustomTimePickerDemoState extends BasePageState<CustomTimePickerDemo> {
   TimeOfDay selectedStartTime = TimeOfDay(hour: 8, minute: 00);
   TimeOfDay selectedEndTime = TimeOfDay(hour: 9, minute: 00);
+
   late String _department;
   final _formKey = GlobalKey<FormState>();
 
@@ -70,7 +71,7 @@ class _CustomTimePickerDemoState extends BasePageState<CustomTimePickerDemo> {
                 ),
                 validator: (val) {
                   if (val!.length == 0)
-                    return "Please enter username";
+                    return "Please enter department name";
                   else
                     return null;
                 },
@@ -131,6 +132,12 @@ class _CustomTimePickerDemoState extends BasePageState<CustomTimePickerDemo> {
                   // decoration: BoxDecoration(
                   //     color: Colors.orange,
                   //     borderRadius: BorderRadius.circular(20)),
+
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 0.0,
+                    vertical: 40.0,
+                  ),
+
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       primary: Colors.orange, // background
@@ -139,16 +146,6 @@ class _CustomTimePickerDemoState extends BasePageState<CustomTimePickerDemo> {
                     onPressed: () {
                       //add method for insert data and call api
                       _insertNewBooking();
-
-                      // if (_formKey.currentState.validate()) {
-                      //   _formKey.currentState.save();
-                      //   // _scaffoldKey.currentState.showSnackBar(new SnackBar(
-                      //   //   content: new Text("Your email: $_email and Password: $_password"),
-                      //   // ));
-                      //
-                      //   Navigator.push(context,
-                      //       MaterialPageRoute(builder: (_) => MyHome()));
-                      // }
                     },
 
                     child: Padding(
@@ -182,17 +179,68 @@ class _CustomTimePickerDemoState extends BasePageState<CustomTimePickerDemo> {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       final DateFormat formatterNow = DateFormat('yyyy-MM-dd HH:mm:ss');
 
+      var format = "";
+      if (selectedStartTime.format(context).contains("AM") ||
+          selectedStartTime.format(context).contains("PM")) {
+        format = 'yyyy-MM-dd hh:mm a';
+      } else {
+        format = 'yyyy-MM-dd HH:mm';
+      }
+
+      String selectedStartDateTime = formatter.format(widget._selectedDay!) +
+          " " +
+          selectedStartTime.format(context); //'July 7,2020 10:00 AM';
+      DateFormat selectedStartDateTimeFormat = DateFormat(format);
+
+      String selectedEndDateTime = formatter.format(widget._selectedDay!) +
+          " " +
+          selectedEndTime.format(context); //'July 7,2020 10:00 AM';
+      DateFormat selectedEndDateTimeFormat = DateFormat(format);
+
+      if (selectedStartDateTimeFormat
+          .parse(selectedStartDateTime)
+          .isAfter(selectedEndDateTimeFormat.parse(selectedEndDateTime))) {
+        CustomSnackbar().show(
+            context,
+            "The Start Time is after End Time! Please change the Time and try again!",
+            MessageType.ERROR);
+        return;
+      }
+
       Result result = await BookingRepo().insertNewBooking(
           formatter.format(widget._selectedDay!),
+          formatterNow
+              .format(selectedStartDateTimeFormat.parse(selectedStartDateTime)),
+          formatterNow
+              .format(selectedEndDateTimeFormat.parse(selectedEndDateTime)),
           selectedStartTime.format(context),
           selectedEndTime.format(context),
           _department,
           formatterNow.format(DateTime.now()));
+
       if (result.isSuccess) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (_) => TableEventsExample("")));
+        if (result.data == "Time Slot Not Available") {
+          CustomSnackbar().show(
+              context,
+              "The following time slot is not available! Please choose another Time Slot!",
+              MessageType.ERROR);
+        } else {
+          // Navigator.of(context).pop();
+          // Navigator.push(
+          //     context, MaterialPageRoute(builder: (_) => TableEventsExample()));
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              settings: RouteSettings(name: "/TableEventsExample"),
+              builder: (context) => TableEventsExample(),
+            ),
+          );
+        }
       } else {
-        CustomSnackbar().show(context, "Login Failed!!", MessageType.ERROR);
+        CustomSnackbar().show(
+            context,
+            "Booking Insertion Failed!! Please try again later!",
+            MessageType.ERROR);
       }
       showLoadingView(false);
     }

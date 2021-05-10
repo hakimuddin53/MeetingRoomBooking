@@ -35,12 +35,21 @@ class _MyHomeState extends State<MyHome> {
       padding: const EdgeInsets.all(10.0),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) =>
-                      // TableBasicsExample(MeetingRoom.name.toString())));
-                      TableEventsExample(MeetingRoom.name.toString())));
+          setMeetingRoom(MeetingRoom.name.toString());
+
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (_) =>
+          //             // TableBasicsExample(MeetingRoom.name.toString())));
+          //             TableEventsExample()));
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              settings: RouteSettings(name: "/TableEvents"),
+              builder: (context) => TableEventsExample(),
+            ),
+          );
         },
         child: Card(
           color: Colors.orangeAccent,
@@ -114,5 +123,9 @@ class _MyHomeState extends State<MyHome> {
         ),
       ),
     );
+  }
+
+  void setMeetingRoom(String name) async {
+    await UserRepo().setMeetingRoom(name);
   }
 }

@@ -33,7 +33,7 @@ class _LoginDemoState extends BasePageState<LoginDemo> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(top: 60.0),
+                padding: const EdgeInsets.only(top: 60.0, bottom: 70.0),
                 child: Center(
                   child: Container(
                       width: 200,
@@ -48,29 +48,45 @@ class _LoginDemoState extends BasePageState<LoginDemo> {
                 key: _formKey,
                 child: new Column(
                   children: <Widget>[
-                    new TextFormField(
-                      decoration: InputDecoration(
-                          hintText: "Username", labelText: "Username"),
-                      // keyboardType: TextInputType.emailAddress,
-                      validator: (val) {
-                        if (val!.length == 0)
-                          return "Please enter username";
-                        else
-                          return null;
-                      },
-                      onSaved: (val) => _email = val!,
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: TextFormField(
+                        // decoration: InputDecoration(
+                        //     hintText: "Username", labelText: "Username"),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Username',
+                        ),
+                        // keyboardType: TextInputType.emailAddress,
+                        validator: (val) {
+                          if (val!.length == 0)
+                            return "Please enter username";
+                          else
+                            return null;
+                        },
+                        onSaved: (val) => _email = val!,
+                      ),
                     ),
-                    new TextFormField(
-                      decoration: InputDecoration(
-                          hintText: "Password", labelText: "Password"),
-                      obscureText: true,
-                      validator: (val) {
-                        if (val!.length == 0)
-                          return "Please enter password";
-                        else
-                          return null;
-                      },
-                      onSaved: (val) => _password = val!,
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 20.0),
+                      child: TextFormField(
+                        // decoration: InputDecoration(
+                        //     hintText: "Password", labelText: "Password"),
+
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Password',
+                        ),
+                        obscureText: true,
+                        validator: (val) {
+                          if (val!.length == 0)
+                            return "Please enter password";
+                          else
+                            return null;
+                        },
+                        onSaved: (val) => _password = val!,
+                      ),
                     ),
                     new Padding(
                       padding: const EdgeInsets.only(top: 30.0),
@@ -120,7 +136,19 @@ class _LoginDemoState extends BasePageState<LoginDemo> {
 
       Result result = await AuthRepo().login(_email, _password);
       if (result.isSuccess) {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => MyHome()));
+        // Navigator.push(context, MaterialPageRoute(builder: (_) => MyHome()));
+
+        // Navigator.of(context).push(
+        //     MaterialPageRoute(
+        //         settings: RouteSettings(name: "/MyHome"),
+        //         builder: (context) => MyHome(),
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            settings: RouteSettings(name: "/MyHome"),
+            builder: (context) => MyHome(),
+          ),
+        );
       } else {
         CustomSnackbar().show(context, "Login Failed!!", MessageType.ERROR);
       }

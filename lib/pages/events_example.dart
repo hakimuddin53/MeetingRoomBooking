@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:abx_booking/data/booking_repo.dart';
 import 'package:abx_booking/data/result.dart';
 import 'package:abx_booking/data/user_repo.dart';
+import 'package:abx_booking/home.dart';
 import 'package:abx_booking/network/api/model/booking_model.dart';
 import 'package:abx_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -13,19 +14,17 @@ import '../addevent.dart';
 import '../base_page_state.dart';
 
 class TableEventsExample extends StatefulWidget {
-  final String name;
-
-  TableEventsExample(this.name);
-
   @override
   _TableEventsExampleState createState() => _TableEventsExampleState();
 }
 
 class _TableEventsExampleState extends BasePageState<TableEventsExample> {
   late ValueNotifier<List<Booking>> _selectedEvents;
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+  CalendarFormat _calendarFormat = CalendarFormat.twoWeeks;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+
+  String meetingRoomName = "";
 
   var kEventsBooking = LinkedHashMap<DateTime, List<Booking>>(
     equals: isSameDay,
@@ -36,13 +35,17 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
   void initState() {
     super.initState();
 
-    setMeetingRoom(widget.name);
+    getMeetingRoom();
 
     _selectedDay = _focusedDay;
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _loadDataForPage();
     });
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+  }
+
+  Future<void> getMeetingRoom() async {
+    meetingRoomName = await UserRepo().getMeetingRoom();
   }
 
   void setMeetingRoom(String name) async {
@@ -107,82 +110,210 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TableCalendar - Events'),
+        title: Text('Select Day'),
+        backgroundColor: Colors.orange[800],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              widget.name,
-              style: TextStyle(color: Colors.black, fontSize: 24),
+      body: WillPopScope(
+        onWillPop: _onWillPop,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                meetingRoomName,
+                style: TextStyle(color: Colors.black, fontSize: 24),
+              ),
             ),
-          ),
-          TableCalendar<Booking>(
-            firstDay: kFirstDay,
-            lastDay: kLastDay,
-            focusedDay: _focusedDay,
-            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-            calendarFormat: _calendarFormat,
-            eventLoader: _getEventsForDay,
-            startingDayOfWeek: StartingDayOfWeek.monday,
-            calendarStyle: CalendarStyle(
-              // Use `CalendarStyle` to customize the UI
-              outsideDaysVisible: false,
-            ),
-            onDaySelected: _onDaySelected,
-            onFormatChanged: (format) {
-              if (_calendarFormat != format) {
-                setState(() {
-                  _calendarFormat = format;
-                });
-              }
-            },
-            onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
-            },
-          ),
-          const SizedBox(height: 8.0),
-          Expanded(
-            child: ValueListenableBuilder<List<Booking>>(
-              valueListenable: _selectedEvents,
-              builder: (context, value, _) {
-                return ListView.builder(
-                  itemCount: value.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 12.0,
-                        vertical: 4.0,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: ListTile(
-                        onTap: () => print('${value[index]}'),
-                        title: Text('${value[index].userName}'),
-                      ),
-                    );
-                  },
-                );
+            TableCalendar<dynamic>(
+              firstDay: kFirstDay,
+              lastDay: kLastDay,
+              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              calendarFormat: _calendarFormat,
+              eventLoader: _getEventsForDay,
+              startingDayOfWeek: StartingDayOfWeek.monday,
+              calendarBuilders: calendarBuilder(),
+              calendarStyle: CalendarStyle(
+                // Use `CalendarStyle` to customize the UI
+                outsideDaysVisible: false,
+              ),
+              onDaySelected: _onDaySelected,
+              onFormatChanged: (format) {
+                if (_calendarFormat != format) {
+                  setState(() {
+                    _calendarFormat = format;
+                  });
+                }
+              },
+              onPageChanged: (focusedDay) {
+                _focusedDay = focusedDay;
               },
             ),
-          ),
-        ],
+            const SizedBox(height: 8.0),
+            Expanded(
+              child: ValueListenableBuilder<List<Booking>>(
+                valueListenable: _selectedEvents,
+                builder: (context, value, _) {
+                  return ListView.builder(
+                    itemCount: value.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 12.0,
+                          vertical: 4.0,
+                        ),
+                        // decoration: BoxDecoration(
+                        //   border: Border.all(),
+                        //   borderRadius: BorderRadius.circular(12.0),
+                        // ),
+                        child: ListTile(
+                          onTap: () => print('${value[index]}'),
+                          title: Row(
+                            children: <Widget>[
+                              Text(
+                                '${value[index].userName}',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Expanded(
+                                  child: Text(
+                                '${value[index].startTimeDescription}' +
+                                    " - " +
+                                    '${value[index].endTimeDescription}',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ))
+                            ],
+                          ),
+
+                          // Text('${value[index].userName}'),
+                          subtitle: Text('${value[index].department}'),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 10.0, bottom: 10, top: 10),
+              child: Align(
+                alignment: FractionalOffset.bottomRight,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.orange, // background
+                    onPrimary: Colors.white, // foreground
+                  ),
+                  onPressed: () {
+                    // test();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: "/CustomTimePickerDemo"),
+                        builder: (context) =>
+                            CustomTimePickerDemo(_selectedDay),
+                      ),
+                    );
+
+                    // Navigator.push(context,
+                    //     MaterialPageRoute(builder: (_) => MyHome()));
+                  },
+                  child: Text(
+                    'Add',
+                    style: TextStyle(color: Colors.white, fontSize: 25),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.orangeAccent,
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => CustomTimePickerDemo(_selectedDay)));
-          }),
+      // floatingActionButton: FloatingActionButton(
+      //     backgroundColor: Colors.orangeAccent,
+      //     child: Icon(Icons.add),
+      //     onPressed: () {
+      //       // Navigator.push(
+      //       //     context,
+      //       //     MaterialPageRoute(
+      //       //         builder: (_) => CustomTimePickerDemo(_selectedDay)));
+      //
+      //       Navigator.of(context).push(
+      //         MaterialPageRoute(
+      //           settings: RouteSettings(name: "/CustomTimePickerDemo"),
+      //           builder: (context) => CustomTimePickerDemo(_selectedDay),
+      //         ),
+      //       );
+      //     }),
     );
   }
+
+  CalendarBuilders calendarBuilder() {
+    return CalendarBuilders(
+      markerBuilder: (context, date, events) {
+        final children = <Widget>[];
+        if (events.isNotEmpty) {
+          children.add(
+            Positioned(
+              bottom: 1,
+              child: _buildEventsMarkerNum(events),
+            ),
+          );
+        } else {
+          children.add(
+            Positioned(
+              bottom: 1,
+              child: SizedBox.shrink(),
+            ),
+          );
+        }
+        return children.single;
+      },
+    );
+  }
+
+  Future<bool> _onWillPop() {
+    // if (!AppConfig.mustLogin()) Navigator.of(context).pop(false);
+    // Navigator.of(context).pop();
+    // Navigator.of(context).pop();
+
+    // Navigator.popUntil(context, ModalRoute.withName("/MyHome"));
+
+    Navigator.popUntil(
+        context, ModalRoute.withName(Navigator.defaultRouteName + 'MyHome'));
+
+    // Navigator.of(context).pushAndRemoveUntil(
+    //     MaterialPageRoute(builder: (c) => MyHome()), (route) => false);
+    return Future.value(false);
+  }
+}
+
+Widget _buildEventsMarkerNum(List events) {
+  return buildCalendarDayMarker(
+      text: '${events.length}', backColor: Colors.orange);
+}
+
+AnimatedContainer buildCalendarDayMarker({
+  required String text,
+  required Color backColor,
+}) {
+  return AnimatedContainer(
+    duration: Duration(milliseconds: 300),
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: backColor,
+    ),
+    width: 52,
+    height: 13,
+    child: Center(
+      child: Text(
+        text,
+        style: TextStyle().copyWith(
+          color: Colors.white,
+          fontSize: 10.0,
+        ),
+      ),
+    ),
+  );
 }
 
 // for (DateTime indexDay = DateTime(this.year, this.month, 1);
