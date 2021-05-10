@@ -19,7 +19,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TableCalendar Example',
+      debugShowCheckedModeBanner: false,
+      title: 'ABX Meeting Room Booking',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

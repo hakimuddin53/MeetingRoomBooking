@@ -197,30 +197,38 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.only(right: 10.0, bottom: 10, top: 10),
+              margin: const EdgeInsets.only(right: 10.0, bottom: 20, top: 10),
               child: Align(
                 alignment: FractionalOffset.bottomRight,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.orange, // background
-                    onPrimary: Colors.white, // foreground
-                  ),
-                  onPressed: () {
-                    // test();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        settings: RouteSettings(name: "/CustomTimePickerDemo"),
-                        builder: (context) =>
-                            CustomTimePickerDemo(_selectedDay),
-                      ),
-                    );
+                child: Container(
+                  height: 40,
+                  width: 250,
+                  decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.orange, // background
+                      onPrimary: Colors.white, // foreground
+                    ),
+                    onPressed: () {
+                      // test();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          settings:
+                              RouteSettings(name: "/CustomTimePickerDemo"),
+                          builder: (context) =>
+                              CustomTimePickerDemo(_selectedDay),
+                        ),
+                      );
 
-                    // Navigator.push(context,
-                    //     MaterialPageRoute(builder: (_) => MyHome()));
-                  },
-                  child: Text(
-                    'Add',
-                    style: TextStyle(color: Colors.white, fontSize: 25),
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (_) => MyHome()));
+                    },
+                    child: Text(
+                      'Add',
+                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    ),
                   ),
                 ),
               ),
