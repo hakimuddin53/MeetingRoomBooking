@@ -197,6 +197,17 @@ class _CustomTimePickerDemoState extends BasePageState<CustomTimePickerDemo> {
           selectedEndTime.format(context); //'July 7,2020 10:00 AM';
       DateFormat selectedEndDateTimeFormat = DateFormat(format);
 
+      if (formatterNow.format(
+              selectedStartDateTimeFormat.parse(selectedStartDateTime)) ==
+          formatterNow
+              .format(selectedEndDateTimeFormat.parse(selectedEndDateTime))) {
+        CustomSnackbar().show(
+            context,
+            "The Start Time cannot be same as End Time! Please change the Time and try again!",
+            MessageType.ERROR);
+        return;
+      }
+
       if (selectedStartDateTimeFormat
           .parse(selectedStartDateTime)
           .isAfter(selectedEndDateTimeFormat.parse(selectedEndDateTime))) {

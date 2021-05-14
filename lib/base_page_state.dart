@@ -11,6 +11,8 @@ abstract class BasePageState<T extends StatefulWidget> extends State<T>
   bool showLoading = false;
   Widget loadingWidget = SizedBox.shrink();
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return !_shownView
@@ -68,6 +70,7 @@ abstract class BasePageState<T extends StatefulWidget> extends State<T>
       if (show) {
         loadingWidget = LoadingView(
           'Loading..',
+          iconColors: Colors.orange,
           backgroundColor: Colors.black,
           textSize: 12,
         );

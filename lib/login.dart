@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'base_page_state.dart';
 import 'components/custom_snackbar.dart';
@@ -131,7 +132,8 @@ class _LoginDemoState extends BasePageState<LoginDemo> {
   void _signInHandling() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      showLoadingView(true);
+      // showLoadingView(true);
+      EasyLoading.show();
       FocusScope.of(context).requestFocus(FocusNode());
 
       Result result = await AuthRepo().login(_email, _password);
@@ -152,7 +154,8 @@ class _LoginDemoState extends BasePageState<LoginDemo> {
       } else {
         CustomSnackbar().show(context, "Login Failed!!", MessageType.ERROR);
       }
-      showLoadingView(false);
+      // showLoadingView(false);
+      EasyLoading.dismiss();
     }
   }
 }

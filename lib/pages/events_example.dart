@@ -3,7 +3,6 @@ import 'dart:collection';
 import 'package:abx_booking/data/booking_repo.dart';
 import 'package:abx_booking/data/result.dart';
 import 'package:abx_booking/data/user_repo.dart';
-import 'package:abx_booking/home.dart';
 import 'package:abx_booking/network/api/model/booking_model.dart';
 import 'package:abx_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -236,22 +235,6 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //     backgroundColor: Colors.orangeAccent,
-      //     child: Icon(Icons.add),
-      //     onPressed: () {
-      //       // Navigator.push(
-      //       //     context,
-      //       //     MaterialPageRoute(
-      //       //         builder: (_) => CustomTimePickerDemo(_selectedDay)));
-      //
-      //       Navigator.of(context).push(
-      //         MaterialPageRoute(
-      //           settings: RouteSettings(name: "/CustomTimePickerDemo"),
-      //           builder: (context) => CustomTimePickerDemo(_selectedDay),
-      //         ),
-      //       );
-      //     }),
     );
   }
 
@@ -288,9 +271,6 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
 
     Navigator.popUntil(
         context, ModalRoute.withName(Navigator.defaultRouteName + 'MyHome'));
-
-    // Navigator.of(context).pushAndRemoveUntil(
-    //     MaterialPageRoute(builder: (c) => MyHome()), (route) => false);
     return Future.value(false);
   }
 }
@@ -323,85 +303,3 @@ AnimatedContainer buildCalendarDayMarker({
     ),
   );
 }
-
-// for (DateTime indexDay = DateTime(this.year, this.month, 1);
-//     indexDay.month == this.month;
-//     indexDay = indexDay.add(Duration(days: 1))) {
-//   print(indexDay.toString());
-// }
-
-// _getEventsForDay(_selectedDay!);
-// _selectedEvents = ValueNotifier(_eventList);
-
-// final DateFormat formatter = DateFormat('yyyy-MM-dd');
-// final String formatted = formatter.format(day);
-// _loadDataFromAPI(formatted, day);
-
-// final DateFormat formatter = DateFormat('yyyy-MM-dd');
-// final String formatted = formatter.format(day);
-// _loadDataFromAPI(formatted, day);
-
-// if (kEventsBooking[day] != null) {
-//   kEventsBooking[day]!.addAll(_eventListDay);
-// } else {
-//   kEventsBooking[day] = [_eventListDay.single];
-// }
-
-// List<Booking> newEventFromApi = [];
-//
-// showLoadingView(true);
-// Result resultApi = BookingRepo().booking(month);
-// if (resultApi.isSuccess) {
-//   newEventFromApi = resultApi.data;
-//   _eventList.addAll(newEventFromApi);
-//   // setState(() {
-//   //   _eventList.addAll(newEventFromApi);
-//   // });
-//
-//   showLoadingView(false);
-// } else {
-//   showLoadingView(false);
-// }
-
-// showLoadingView(true);
-// Result resultApi = await BookingRepo().booking(5);
-//
-// if (resultApi.isSuccess) {
-//   List<Booking> newEventFromApi = resultApi.data;
-//
-//   // setState(() {
-//   //   _eventList.addAll(newEventFromApi);
-//   // });
-//
-//   _eventList.addAll(_loadDataFromAPI(5));
-//
-//   kEventsBooking.addAll({
-//     // DateTime.utc(2020, 10, item * 4)
-//     day: _eventList
-//   });
-//
-//   showLoadingView(false);
-// } else {
-//   showLoadingView(false);
-// }
-//
-// var kEvents1 = LinkedHashMap<DateTime, List<Booking>>(
-//   equals: isSameDay,
-//   hashCode: getHashCode,
-// )..addAll({
-//     // DateTime.utc(2020, 10, item * 4)
-//     DateTime.parse("2021-04-01 13:01:01"): [
-//       Booking(
-//         1,
-//       ),
-//       Booking('Today\'s Event 2'),
-//     ],
-//   });
-
-//return kEventsBooking[day] ?? [];
-
-// _eventListDay.add(resultApi.data);
-
-// setState(() {
-//   _eventList.addAll(newEventFromApi);
-// });
