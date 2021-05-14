@@ -84,7 +84,7 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
   }
 
   void _loadDataFromAPI(String day, DateTime date) async {
-    showLoadingView(true);
+    super.showLoadingView(true);
     Result resultApi = await BookingRepo().booking(day);
     if (resultApi.isSuccess) {
       kEventsBooking.addAll({
@@ -99,9 +99,9 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
         _selectedEvents = ValueNotifier(_getEventsForDay(date));
       }
 
-      showLoadingView(false);
+      super.showLoadingView(false);
     } else {
-      showLoadingView(false);
+      super.showLoadingView(false);
     }
   }
 
@@ -114,124 +114,132 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
       ),
       body: WillPopScope(
         onWillPop: _onWillPop,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                meetingRoomName,
-                style: TextStyle(color: Colors.black, fontSize: 24),
-              ),
-            ),
-            TableCalendar<dynamic>(
-              firstDay: kFirstDay,
-              lastDay: kLastDay,
-              focusedDay: _focusedDay,
-              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-              calendarFormat: _calendarFormat,
-              eventLoader: _getEventsForDay,
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              calendarBuilders: calendarBuilder(),
-              calendarStyle: CalendarStyle(
-                // Use `CalendarStyle` to customize the UI
-                outsideDaysVisible: false,
-              ),
-              onDaySelected: _onDaySelected,
-              onFormatChanged: (format) {
-                if (_calendarFormat != format) {
-                  setState(() {
-                    _calendarFormat = format;
-                  });
-                }
-              },
-              onPageChanged: (focusedDay) {
-                _focusedDay = focusedDay;
-              },
-            ),
-            const SizedBox(height: 8.0),
-            Expanded(
-              child: ValueListenableBuilder<List<Booking>>(
-                valueListenable: _selectedEvents,
-                builder: (context, value, _) {
-                  return ListView.builder(
-                    itemCount: value.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 12.0,
-                          vertical: 4.0,
-                        ),
-                        // decoration: BoxDecoration(
-                        //   border: Border.all(),
-                        //   borderRadius: BorderRadius.circular(12.0),
-                        // ),
-                        child: ListTile(
-                          onTap: () => print('${value[index]}'),
-                          title: Row(
-                            children: <Widget>[
-                              Text(
-                                '${value[index].userName}',
-                                textAlign: TextAlign.left,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+        child: Stack(
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Text(
+                    meetingRoomName,
+                    style: TextStyle(color: Colors.black, fontSize: 24),
+                  ),
+                ),
+                TableCalendar<dynamic>(
+                  firstDay: kFirstDay,
+                  lastDay: kLastDay,
+                  focusedDay: _focusedDay,
+                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                  calendarFormat: _calendarFormat,
+                  eventLoader: _getEventsForDay,
+                  startingDayOfWeek: StartingDayOfWeek.monday,
+                  calendarBuilders: calendarBuilder(),
+                  calendarStyle: CalendarStyle(
+                    // Use `CalendarStyle` to customize the UI
+                    outsideDaysVisible: false,
+                  ),
+                  onDaySelected: _onDaySelected,
+                  onFormatChanged: (format) {
+                    if (_calendarFormat != format) {
+                      setState(() {
+                        _calendarFormat = format;
+                      });
+                    }
+                  },
+                  onPageChanged: (focusedDay) {
+                    _focusedDay = focusedDay;
+                  },
+                ),
+                const SizedBox(height: 8.0),
+                Expanded(
+                  child: ValueListenableBuilder<List<Booking>>(
+                    valueListenable: _selectedEvents,
+                    builder: (context, value, _) {
+                      return ListView.builder(
+                        itemCount: value.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 12.0,
+                              vertical: 4.0,
+                            ),
+                            // decoration: BoxDecoration(
+                            //   border: Border.all(),
+                            //   borderRadius: BorderRadius.circular(12.0),
+                            // ),
+                            child: ListTile(
+                              onTap: () => print('${value[index]}'),
+                              title: Row(
+                                children: <Widget>[
+                                  Text(
+                                    '${value[index].userName}',
+                                    textAlign: TextAlign.left,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Expanded(
+                                      child: Text(
+                                    '${value[index].startTimeDescription}' +
+                                        " - " +
+                                        '${value[index].endTimeDescription}',
+                                    textAlign: TextAlign.right,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ))
+                                ],
                               ),
-                              Expanded(
-                                  child: Text(
-                                '${value[index].startTimeDescription}' +
-                                    " - " +
-                                    '${value[index].endTimeDescription}',
-                                textAlign: TextAlign.right,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ))
-                            ],
-                          ),
 
-                          // Text('${value[index].userName}'),
-                          subtitle: Text('${value[index].department}'),
-                        ),
+                              // Text('${value[index].userName}'),
+                              subtitle: Text('${value[index].department}'),
+                            ),
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(right: 10.0, bottom: 20, top: 10),
-              child: Align(
-                alignment: FractionalOffset.bottomRight,
-                child: Container(
-                  height: 40,
-                  width: 250,
-                  decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(20)),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.orange, // background
-                      onPrimary: Colors.white, // foreground
-                    ),
-                    onPressed: () {
-                      // test();
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          settings:
-                              RouteSettings(name: "/CustomTimePickerDemo"),
-                          builder: (context) =>
-                              CustomTimePickerDemo(_selectedDay),
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.only(right: 10.0, bottom: 20, top: 10),
+                  child: Align(
+                    alignment: FractionalOffset.bottomRight,
+                    child: Container(
+                      height: 40,
+                      width: 250,
+                      decoration: BoxDecoration(
+                          color: Colors.orange,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.orange, // background
+                          onPrimary: Colors.white, // foreground
                         ),
-                      );
+                        onPressed: () {
+                          // test();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              settings:
+                                  RouteSettings(name: "/CustomTimePickerDemo"),
+                              builder: (context) =>
+                                  CustomTimePickerDemo(_selectedDay),
+                            ),
+                          );
 
-                      // Navigator.push(context,
-                      //     MaterialPageRoute(builder: (_) => MyHome()));
-                    },
-                    child: Text(
-                      'Add',
-                      style: TextStyle(color: Colors.white, fontSize: 25),
+                          // Navigator.push(context,
+                          //     MaterialPageRoute(builder: (_) => MyHome()));
+                        },
+                        child: Text(
+                          'Add',
+                          style: TextStyle(color: Colors.white, fontSize: 25),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
+            super.loadingWidget
           ],
         ),
       ),
@@ -263,10 +271,6 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
   }
 
   Future<bool> _onWillPop() {
-    // if (!AppConfig.mustLogin()) Navigator.of(context).pop(false);
-    // Navigator.of(context).pop();
-    // Navigator.of(context).pop();
-
     // Navigator.popUntil(context, ModalRoute.withName("/MyHome"));
 
     Navigator.popUntil(

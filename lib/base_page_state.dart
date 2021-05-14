@@ -71,7 +71,7 @@ abstract class BasePageState<T extends StatefulWidget> extends State<T>
         loadingWidget = LoadingView(
           'Loading..',
           iconColors: Colors.orange,
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.white,
           textSize: 12,
         );
       } else {

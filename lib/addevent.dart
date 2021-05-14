@@ -57,114 +57,122 @@ class _CustomTimePickerDemoState extends BasePageState<CustomTimePickerDemo> {
         title: Text('Select Booking Time'),
         backgroundColor: Colors.orange[800],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: <Widget>[
-          Form(
-            key: _formKey,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              child: TextFormField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Department Name',
-                ),
-                validator: (val) {
-                  if (val!.length == 0)
-                    return "Please enter department name";
-                  else
-                    return null;
-                },
-                onSaved: (val) => _department = val!,
-              ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child:
-                    Text(_selectedDayDisplay, style: TextStyle(fontSize: 20)),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: InkWell(
-                  onTap: () => setState(() {
-                    _selectStartTime();
-                  }),
-                  child: Text(
-                    selectedStartTime.format(context),
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child:
-                    Text(_selectedDayDisplay, style: TextStyle(fontSize: 20)),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: InkWell(
-                  onTap: () => setState(() {
-                    _selectEndTime();
-                  }),
-                  child: Text(
-                    selectedEndTime.format(context),
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Container(
-                  width: double.infinity,
-                  // decoration: BoxDecoration(
-                  //     color: Colors.orange,
-                  //     borderRadius: BorderRadius.circular(20)),
-
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 0.0,
-                    vertical: 40.0,
-                  ),
-
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.orange, // background
-                      onPrimary: Colors.white, // foreground
+              Form(
+                key: _formKey,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Department Name',
                     ),
-                    onPressed: () {
-                      //add method for insert data and call api
-                      _insertNewBooking();
+                    validator: (val) {
+                      if (val!.length == 0)
+                        return "Please enter department name";
+                      else
+                        return null;
                     },
-
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    onSaved: (val) => _department = val!,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Text(_selectedDayDisplay,
+                        style: TextStyle(fontSize: 20)),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: InkWell(
+                      onTap: () => setState(() {
+                        _selectStartTime();
+                      }),
                       child: Text(
-                        'Save',
-                        style: TextStyle(color: Colors.white, fontSize: 20),
+                        selectedStartTime.format(context),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
-
-                    // child: Text(
-                    //   'Save',
-                    //   style: TextStyle(color: Colors.white, fontSize: 25),
-                    // ),
                   ),
-                ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Text(_selectedDayDisplay,
+                        style: TextStyle(fontSize: 20)),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: InkWell(
+                      onTap: () => setState(() {
+                        _selectEndTime();
+                      }),
+                      child: Text(
+                        selectedEndTime.format(context),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    child: Container(
+                      width: double.infinity,
+                      // decoration: BoxDecoration(
+                      //     color: Colors.orange,
+                      //     borderRadius: BorderRadius.circular(20)),
+
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 0.0,
+                        vertical: 40.0,
+                      ),
+
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.orange, // background
+                          onPrimary: Colors.white, // foreground
+                        ),
+                        onPressed: () {
+                          //add method for insert data and call api
+                          _insertNewBooking();
+                        },
+
+                        child: Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          child: Text(
+                            'Save',
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        ),
+
+                        // child: Text(
+                        //   'Save',
+                        //   style: TextStyle(color: Colors.white, fontSize: 25),
+                        // ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
+          super.loadingWidget
         ],
       ),
     );
@@ -173,7 +181,7 @@ class _CustomTimePickerDemoState extends BasePageState<CustomTimePickerDemo> {
   void _insertNewBooking() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      showLoadingView(true);
+      super.showLoadingView(true);
       FocusScope.of(context).requestFocus(FocusNode());
 
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -253,7 +261,7 @@ class _CustomTimePickerDemoState extends BasePageState<CustomTimePickerDemo> {
             "Booking Insertion Failed!! Please try again later!",
             MessageType.ERROR);
       }
-      showLoadingView(false);
+      super.showLoadingView(false);
     }
   }
 }

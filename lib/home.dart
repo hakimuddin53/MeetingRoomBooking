@@ -1,5 +1,4 @@
 import 'package:abx_booking/model/meetingroom.dart';
-import 'package:abx_booking/pages/basics_example.dart';
 import 'package:abx_booking/pages/events_example.dart';
 import 'package:flutter/material.dart';
 
@@ -145,62 +144,6 @@ class _MyHomeState extends State<MyHome> {
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     //backgroundColor: Colors.grey[900],
-  //     appBar: AppBar(
-  //       title: Text("Meeting Room"),
-  //       backgroundColor: Colors.orange[800],
-  //       actions: <Widget>[
-  //         PopupMenuButton<String>(
-  //           onSelected: handleClick,
-  //           itemBuilder: (BuildContext context) {
-  //             return {'Logout', 'Settings'}.map((String choice) {
-  //               return PopupMenuItem<String>(
-  //                 value: choice,
-  //                 child: Text(choice),
-  //               );
-  //             }).toList();
-  //           },
-  //         ),
-  //       ],
-  //     ),
-  //     body: WillPopScope(
-  //       onWillPop: _onWillPop,
-  //       child: Padding(
-  //         padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
-  //         child: Column(
-  //           children: <Widget>[
-  //             // Row(
-  //             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             //   children: <Widget>[
-  //             //     Icon(Icons.menu, size: 35, color: Colors.white),
-  //             //     Text('Notifications',
-  //             //       style: TextStyle (
-  //             //           color: Colors.white,
-  //             //           fontSize: 25
-  //             //       ),
-  //             //     ),
-  //             //     Icon(Icons.notifications_none, size: 35, color: Colors.white)
-  //             //   ],
-  //             // ),
-  //             Column(
-  //                 children: meetingRooms.map((p) {
-  //                   return meetingRoomCard(p);
-  //                 }).toList())
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Future<bool> _onWillPop() {
-  //   Navigator.of(context).pop(false);
-  //   return Future.value(false);
-  // }
-  //
   void handleClick(String value) {
     switch (value) {
       case 'Logout':
