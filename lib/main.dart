@@ -4,12 +4,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
-import 'pages/basics_example.dart';
-import 'pages/complex_example.dart';
-import 'pages/events_example.dart';
-import 'pages/multi_example.dart';
-import 'pages/range_example.dart';
 import 'login.dart';
 
 void main() {
