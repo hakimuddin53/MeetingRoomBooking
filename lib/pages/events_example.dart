@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:abx_booking/components/custom_snackbar.dart';
 import 'package:abx_booking/data/booking_repo.dart';
 import 'package:abx_booking/data/result.dart';
 import 'package:abx_booking/data/user_repo.dart';
@@ -169,7 +170,9 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
                             //   borderRadius: BorderRadius.circular(12.0),
                             // ),
                             child: ListTile(
-                              onTap: () => print('${value[index]}'),
+                              onTap: () => {
+                                //_deleteBooking(value[index], value, index),
+                              },
                               title: Row(
                                 children: <Widget>[
                                   Text(
@@ -186,7 +189,24 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
                                     textAlign: TextAlign.right,
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
-                                  ))
+                                  )),
+                                  InkWell(
+                                    onTap: () => {
+                                      _deleteBooking(
+                                          value[index], value, index),
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 10.0,
+                                          right: 10.0,
+                                          bottom: 0,
+                                          top: 0),
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
 
@@ -244,6 +264,37 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
         ),
       ),
     );
+  }
+
+  void _deleteBooking(
+      Booking booking, List<Booking> bookingList, int index) async {
+    super.showLoadingView(true);
+    FocusScope.of(context).requestFocus(FocusNode());
+
+    Result result = await BookingRepo().deleteBooking(booking);
+
+    if (result.isSuccess) {
+      if (result.data == "UserName Not Same") {
+        CustomSnackbar().show(
+            context,
+            "Can only delete the booking which was created by you!!",
+            MessageType.ERROR);
+      } else {
+        bookingList.removeAt(index);
+
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     settings: RouteSettings(name: "/TableEventsExample"),
+        //     builder: (context) => TableEventsExample(),
+        //   ),
+        // );
+      }
+    } else {
+      CustomSnackbar().show(
+          context, "Delete Failed!! Please try again!", MessageType.ERROR);
+    }
+
+    super.showLoadingView(false);
   }
 
   CalendarBuilders calendarBuilder() {

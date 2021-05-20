@@ -1,8 +1,10 @@
 class AppConfig {
   static String getBaseUrl() {
     // return "https://192.168.20.241:44379/";
-    return "http://192.168.0.130:153/";
-    // return "http://192.168.0.166/ABXBookingAPI/";
+    // return "http://192.168.0.130:153/";
+
+    return "https://abx360api.abxexpress.com.my/";
+    //return "http://192.168.0.166/ABXBookingAPI/";
   }
 
   static int connectTimeout() {

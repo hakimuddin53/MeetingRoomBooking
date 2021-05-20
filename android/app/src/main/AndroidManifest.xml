@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.abx_booking">
+
+    <!--    android:usesCleartextTraffic="true"-->
    <application
-        android:label="abx_booking"
+        android:label="ABX 360"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity

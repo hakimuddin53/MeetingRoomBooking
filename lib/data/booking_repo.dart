@@ -28,6 +28,37 @@ class BookingRepo extends BaseRepo {
     }
   }
 
+  Future<Result> deleteBooking(Booking params) async {
+    try {
+      var userName = await UserRepo().getUserName();
+
+      var param1s = new Booking(
+          params.id,
+          params.date,
+          params.meetingRoomName,
+          userName,
+          params.startTime,
+          params.endTime,
+          params.startTimeDescription,
+          params.endTimeDescription,
+          params.department,
+          params.isActive,
+          params.createdDate,
+          params.createdBy);
+
+      LoginResponseModel response =
+          await Api.getInstance().deleteBooking(param1s);
+
+      if (response.resultCode == "200") {
+        return Result(true, data: response.message);
+      } else {
+        return Result(false, message: response.resultDescription);
+      }
+    } catch (exception, stackTrace) {
+      return handleError(exception, stackTrace);
+    }
+  }
+
   Future<Result> insertNewBooking(
       String selectedDay,
       String selectedStartTime,

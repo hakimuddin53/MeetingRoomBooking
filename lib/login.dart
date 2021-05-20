@@ -17,6 +17,15 @@ class _LoginDemoState extends BasePageState<LoginDemo> {
   late String _email;
   late String _password;
 
+  // Initially password is obscure
+  late bool _passwordVisible;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordVisible = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,8 +87,24 @@ class _LoginDemoState extends BasePageState<LoginDemo> {
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'Password',
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  // Based on passwordVisible state choose the icon
+                                  _passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                                onPressed: () {
+                                  // Update the state i.e. toogle the state of passwordVisible variable
+                                  setState(() {
+                                    _passwordVisible = !_passwordVisible;
+                                  });
+                                },
+                              ),
                             ),
-                            obscureText: true,
+                            obscureText:
+                                !_passwordVisible, //This will obscure text dynamically
                             validator: (val) {
                               if (val!.length == 0)
                                 return "Please enter password";
