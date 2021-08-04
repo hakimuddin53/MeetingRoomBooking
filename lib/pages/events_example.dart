@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:abx_booking/components/abx/table_calendar.dart';
 import 'package:abx_booking/components/custom_snackbar.dart';
 import 'package:abx_booking/data/booking_repo.dart';
 import 'package:abx_booking/data/result.dart';
@@ -8,7 +9,6 @@ import 'package:abx_booking/network/api/model/booking_model.dart';
 import 'package:abx_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 import '../addevent.dart';
 import '../base_page_state.dart';
@@ -138,7 +138,7 @@ class _TableEventsExampleState extends BasePageState<TableEventsExample> {
                   calendarBuilders: calendarBuilder(),
                   calendarStyle: CalendarStyle(
                     // Use `CalendarStyle` to customize the UI
-                    outsideDaysVisible: false,
+                    outsideDaysVisible: true,
                   ),
                   onDaySelected: _onDaySelected,
                   onFormatChanged: (format) {

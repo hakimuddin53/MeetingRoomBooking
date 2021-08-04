@@ -3,7 +3,7 @@
 
 import 'dart:collection';
 
-import 'package:table_calendar/table_calendar.dart';
+import 'package:abx_booking/components/abx/table_calendar.dart';
 
 /// Example event class.
 class Event {
@@ -53,4 +53,4 @@ final kFirstDay = DateTime(kNow.year, kNow.month - 3, kNow.day);
 final kLastDay = DateTime(kNow.year, kNow.month + 3, kNow.day);
 
 final iFirstDay = DateTime(kNow.year, kNow.month, 1);
-final iLastDay = DateTime(kNow.year, kNow.month + 1, 0);
+final iLastDay = DateTime(kNow.year, kNow.month + 2, 0);
